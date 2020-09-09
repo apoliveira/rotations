@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>Rotations</title>
+
+<style>
+  canvas {
+    display: block;
+    margin: 0 auto;
+    height: 50vmin;
+  }
+</style>
+
+</head>
+<body >
+
+<div id="app">
+<canvas id="canvas"></canvas>
+
+Time between rotations: {{this.speed}}ms <input v-model="speed" type="range" min="1" max="1000">
+
+<br />
+
+<select v-model="alpha">
+  <option v-for="angle in angles">
+    {{angle}}
+  </option>
+</select>
+
+<span>The degree is: {{ alpha }}</span>
+<span>Iterations: {{ n }}</span>
+
+<br />
+
+<button v-on:click="draw()">DRAW</button>
+<button v-if="this.drawerId == 0" v-on:click="play()">PLAY</button>
+<button v-if="this.drawerId != 0" v-on:click="pause()">PAUSE</button>
+
+</div>
+
+<script src="https://unpkg.com/vue"></script>
+<script>
+const e = ( 1 + Math.sqrt(5) ) / 2;
+var app = new Vue({
+  el: "#app",
+  data: {
+    angles: [Math.PI, e, (Math.PI + e), e * e],
+    alpha : Math.PI,
+    radius : 100,
+    n : 1,
+    drawerId : 0,
+    ctx: null,
+    dashOffset : 5,
+    dashColor : "green",
+    speed: 500,
+  },
+  methods: {
+    draw : function() {
+      console.log(this.n);
+      this.ctx.beginPath();
+      this.ctx.rotate(-1 * this.deg);
+      this.ctx.moveTo(this.radius - this.dashOffset, 0);
+      this.ctx.lineTo(this.radius + this.dashOffset, 0);
+      this.ctx.stroke()
+      this.n += 1;
+    },
+    play: function() {
+      if(this.drawerId != 0) return;
+      this.drawerId = setInterval(this.draw, this.speed);
+    },
+    pause() {
+      clearTimeout(this.drawerId);
+      this.drawerId = 0
+    },
+    toggle_play() {
+      if(this.drawerId == 0) {
+        this.play();
+      }
+      else {
+        this.pause()
+      }
+    },
+    init_draw() {
+      // Draw circle
+      this.ctx.strokeStyle = "black";
+      this.ctx.translate(this.centerX, this.centerY);
+      this.ctx.beginPath();
+      this.ctx.arc(0,0, this.radius, 0, 2 * Math.PI, true)
+      this.ctx.stroke()
+  
+      // Draw zero
+      this.ctx.strokeStyle = "red";
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.radius - 1.5 * this.dashOffset, 0);
+      this.ctx.lineTo(this.radius + 1.5 * this.dashOffset, 0);
+      this.ctx.stroke()
+
+      this.ctx.strokeStyle = this.dashColor;
+    }
+  },
+  mounted() {
+    var _canvas = document.getElementById("canvas");
+    var _ctx = canvas.getContext("2d");
+    this.canvas = _canvas;
+    this.ctx = _ctx;
+    
+    // Fix ratio
+    let dpi = window.devicePixelRatio;
+    let style_height = +getComputedStyle(this.canvas).getPropertyValue("height").slice(0, -2);
+    let style_width = +getComputedStyle(this.canvas).getPropertyValue("width").slice(0, -2);
+    //scale the this.canvas
+    this.canvas.setAttribute('height', style_height * dpi);
+    this.canvas.setAttribute('width', style_width * dpi)
+
+    // Set position
+    this.centerX = this.canvas.width / 2;
+    this.centerY = this.canvas.height / 2;
+    
+    this.init_draw();
+
+    // Listen for space bar
+    window.addEventListener("keypress", e => {
+      if(e.keyCode == 32) {
+        this.toggle_play();
+      }
+      if(e.keyCode == 45) { // -
+        this.speed -= 25;
+      }
+      if(e.keyCode == 61) { // +
+        this.speed += 25;
+      }
+      console.log(e.keyCode);
+    });
+  },
+  computed: {
+    deg: function() {
+      return (this.alpha % 1) * (2 * Math.PI);
+    }
+  },
+  watch: {
+    alpha: function(){
+      this.ctx.translate(-this.centerX, -this.centerY);
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.init_draw();
+    },
+    speed: function(){
+      if(this.drawerId == 0) return;
+      this.pause();
+      this.play();
+    }
+  }
+});
+</script>
+<script src="/rotation.js"></script>
+</body>
+</html>

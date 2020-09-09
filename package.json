@@ -1,0 +1,16 @@
+{
+  "name": "rotations",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "lite-server": "^2.5.4",
+    "vue": "^2.6.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "lite-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
