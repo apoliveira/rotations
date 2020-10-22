@@ -2,17 +2,16 @@
   "name": "rotations",
   "version": "1.0.0",
   "description": "",
+  "scripts": {
+    "start": "http-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "big.js": "^6.0.1",
-    "bignumber.js": "^9.0.1",
-    "lite-server": "^2.5.4",
+    "http-server": "^0.12.3",
     "vue": "^2.6.12"
   },
   "devDependencies": {},
-  "scripts": {
-    "start": "lite-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
   "license": "ISC"
 }
