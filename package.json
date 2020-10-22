@@ -2,9 +2,11 @@
   "name": "rotations",
   "version": "1.0.0",
   "description": "",
+  "scripts" : {
+    "run": "lite-server"
+  },
   "dependencies": {
     "big.js": "^6.0.1",
-    "bignumber.js": "^9.0.1",
     "lite-server": "^2.5.4",
     "vue": "^2.6.12"
   },
