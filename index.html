@@ -212,7 +212,10 @@ var app = new Vue({
 
     // Listen for space bar
     window.addEventListener("keypress", e => {
-      // console.log(e.keyCode);
+      console.log(e.keyCode);
+      if(e.keyCode == 110) { // n
+        this.n = parseInt(prompt("Update iteration number: ")) + 1;
+      }
       if(e.keyCode == 100) { // d
         this.draw();
       }
