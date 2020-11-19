@@ -154,6 +154,10 @@ var app = new Vue({
     })
     
     window.addEventListener("keypress", e => {
+      //console.log(e.keyCode);
+      if(e.keyCode == 97) { // ?
+        toggle_about();
+      }
       if(e.keyCode == 63) { // ?
         toggle_help();
       }
@@ -175,7 +179,7 @@ var app = new Vue({
           this.speed += 25;
         }
       }
-      if(e.keyCode == 61) { // +
+      if(e.keyCode == 43) { // +
         this.speed += 25;
       }
       if(e.keyCode == 99) { // c

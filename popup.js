@@ -1,17 +1,17 @@
 function togglePopup(div){
-  if(div) {
-    div.classList.toggle("active");
-  } else {
-    var modals = document.getElementsByClassName("active");
+  var modals = document.getElementsByClassName("active");
+  
+  for(i = 0; i < modals.length; i++) {
+    var modal = modals[i];
     
-    for(i = 0; i < modals.length; i++) {
-      var modal = modals[i];
-      
-      modal.classList.remove("active");
-    }
+    modal.classList.remove("active");
   }
   
+  if(div) {
+    div.classList.toggle("active");
+  }
 }
+
 function toggle_help() {
   const help_modal = document.getElementById("help-modal");
   togglePopup(help_modal);

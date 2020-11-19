@@ -3,8 +3,17 @@
   https://codingflag.blogspot.com/2020/09/create-a-simple-popup-modal-using-html-css-and-javascript.html
  */
 
+.popup {
+  position: fixed;
+  top:25%;
+  left:25%;
+  width:50vw;
+  height:50vh;
+  z-index: -1;
+}
+
 .popup .overlay {
-  position:fixed;
+  position: fixed;
   top:0px;
   left:0px;
   width:100vw;
@@ -15,7 +24,7 @@
 }
 
 .popup .content {
-  position:absolute;
+  position: absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%) scale(0);
@@ -45,6 +54,10 @@
   border-radius:50%;
 }
 
+.popup.active {
+  z-index: 5;
+}
+
 .popup.active .overlay {
   display:block;
 }
@@ -66,4 +79,30 @@
   text-transform:uppercase;
   font-weight:600;
   background:#fff;
+}
+
+.popup  .header {
+  background-color: red;
+}
+
+@media only screen and (max-width: 600px) {
+  .popup .active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .popup.active > .content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: inherit;
+    transform: inherit;
+    width: 100vw;
+    height: 100vh;
+  }
 }

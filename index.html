@@ -1,155 +1,191 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotations (mod 1)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotations (mod 1)</title>
 
-<style>
-  body {
-    font-family: "PT Sans", Helvetica, Arial, sans-serif;
-  }
-  #app {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .title {
-    flex-basis: 100%;
-    margin: 0 auto;
-    text-align: center;
-  }
-  canvas {
-    display: block;
-    margin: 0 auto;
-    height: 50vw;
-    width: 50vw;
-  }
-  #controls {
-    align-self: center;
-    margin: 0 auto;
-    width: 30%;
-    padding: 1em;
-    border: 3px solid lightgrey;
-    border-radius: 10px;
-    font-size: 150%;
-  }
-</style>
+  <style>
+    body {
+      font-family: "PT Sans", Helvetica, Arial, sans-serif;
+    }
+    #app {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .title {
+      flex-basis: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      height: 100vmin;
+      width: 100vmin;
+    }
+    #controls {
+      align-self: center;
+      margin: 0 auto;
+      width: 30%;
+      padding: 1em;
+      border: 3px solid lightgrey;
+      border-radius: 10px;
+      font-size: 150%;
+    }
+    
+    @media only screen and (max-width: 600px) {
+      #app {
+        display: block;
+        flex: none;
+      }
+      
+      canvas {
+        height: 100vw;
+        width: 100vw;
+      }
+      
+      #controls {
+        width: 80%;
+      }
+    }
+  </style>
 
-<script type="text/javascript" src="mathjax_config.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+  <script type="text/javascript" src="mathjax_config.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
 
-<link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body >
 
-<div id="app">
-<canvas id="canvas"></canvas>
+  <div id="app">
+  <canvas id="canvas"></canvas>
 
-<div id="controls">
-  <h3 class="title">Rotations (mod 1)</h3>
-  
-  <a href="#" onclick="toggle_about()">About</a>
-  <a href="#" onclick="toggle_help()">Help</a>
-  
-  <p>Time between rotations: {{this.speed}}ms 
-  <br />
-  <input v-model="speed" type="range" min="1" max="1000">
-  
-  <br /><br />
-  
-  Degree of rotation:
-  <select v-model="alpha">
-    <option v-for="{name, angle} in angles" :value="angle" v-html="name">
-    </option>
-  </select>
-  
-  <br />
-  
-  <span>Iterations: {{ n - 1 }}</span>
-  
-  <br /> <br />
-  
-  <button v-on:click="clear()">CLEAR</button>
-  <button v-on:click="draw()">DRAW</button>
-  <button v-if="this.drawerId == 0" v-on:click="play()">PLAY</button>
-  <button v-if="this.drawerId != 0" v-on:click="pause()">PAUSE</button>
-  
-  <br />
-  <br />
-  <span>Closest Iterations: 
-  <ul>
-    <li v-for="c in convergents">
-      {{c}}
-    </li>
-  </ul>
+  <div id="controls">
+    <h3 class="title">Rotations (mod 1)</h3>
+    
+    <a href="#" onclick="toggle_about()">About</a>
+    <a href="#" onclick="toggle_help()">Help</a>
+    
+    <p>Time between rotations: {{this.speed}}ms 
+    <br />
+    <input v-model="speed" type="range" min="1" max="1000">
+    
+    <br /><br />
+    
+    Degree of rotation:
+    <select v-model="alpha">
+      <option v-for="{name, angle} in angles" :value="angle" v-html="name">
+      </option>
+    </select>
+    
+    <br />
+    
+    <span>Iterations: {{ n - 1 }}</span>
+    
+    <br /> <br />
+    
+    <button v-on:click="clear()">RESET</button>
+    <button v-on:click="draw()">DRAW</button>
+    <button v-if="this.drawerId == 0" v-on:click="play()">PLAY</button>
+    <button v-if="this.drawerId != 0" v-on:click="pause()">PAUSE</button>
+    
+    <br />
+    <br />
+    <span>Closest Iterations: 
+    <ul>
+      <li v-for="c in convergents">
+        {{c}}
+      </li>
+    </ul>
 
-</div>
-
-</div>
-
-<div class="popup" id="help-modal">
-  <div class="overlay"></div>
-  <div class="content">
-    <div class="close-btn" onclick="togglePopup();">&times;</div>
-    <h1>Help</h1>
-    <p>The controls boil down to: choose your angle and speed (i.e. time, in ms, between drawing)</p>
-    <h3>Controls/Buttons:</h3>
-      <dl>
-        <dt>Reset</dt>
-        <dd>Reset to initial state.</dd>
-        <dt>Draw</dt>
-        <dd>Draw the next rotation.</dd>
-        <dt>Play</dt>
-        <dd>Keep drawing rotations.</dd>
-      </dl>
-    <h3>Shortcuts:</h3>
-      <dl>
-        <dt>n</dt>
-        <dd>Jump to the n-th rotation. NOTE: this doesn't include all of the rotations between the current rotation and n. It sets n to the given input.</dd>
-        <dt>d</dt>
-        <dd>Draw the next rotation</dd>
-        <dt>&lt;spacebar&gt;</dt>
-        <dd>Toggle the play button</dd>
-        <dt>0</dt>
-        <dd>Set the time between draws to 0; i.e. draw as fast as you can!</dd>
-        <dt>-</dt>
-        <dd>Decrease the amount of time between draws.</dd>
-        <dt>+</dt>
-        <dd>Increase the amount of time between draws.</dd>
-        <dt>Clear and reset the rotations.</dt>
-      </dl>
   </div>
-</div>
 
-<div class="popup" id="about-modal">
-  <div class="overlay"></div>
-  <div class="content">
-    <div class="close-btn" onclick="togglePopup();">&times;</div>
-    <h1>About</h1>
-    <p>Hey there! I'm Andr&eacute;.
-      I'm a Ph.D. student at Wesleyan University and my research is in Diophantine Approximations.
-      You can read more about it on my <a href="https://andrepoliveira.com">website</a>.
-    </p>
-    <p>
-      Some aspects of this field revolve around (ha.) looking at the rotations (mod 1) of a real number.
-    </p>
-    <p>Similar to looking at the integers $\pmod n$, a number $\pmod 1$ is its fractional part (e.g. $\pi = 3.14159...$ (mod 1) is $.14159...$).
-    I like to image taking the real line, taking all of the intervals $[n, n+1)$ and stacking them above the unit interval $[0,1)$.
-    Doing this identifies the endpoints, 0 and 1; So that we're actually on a circle!</p>
-    <p>There will be a blog post explaining more of this soon!</p>
-    <p>
-      The red dash is $0$ (or 1). Each green dash is the fractional part of $n \alpha$ for some $n$ and the chosen $\alpha$. 
-      The orange/yellow dashes are "record breaker" rotations. 
-      Specifically, they correspond to the $n \alpha$ that gets the closest to 0 out of all of the previously visited values.
-      The length of the dash corresponds to the value of $n$; it was hard to distinguish different dashes once they started overlapping.
-    </p>
-    <p>If you have any questions or suggestions, please reach out to me!</p>
   </div>
-</div>
 
-<script type="text/javascript" src="popup.js"></script>
+  <div class="popup" id="help-modal">
+    <div class="overlay"></div>
+    <div draggable="true" class="content">
+      <div class="close-btn" onclick="togglePopup();">&times;</div>
+      <h1>Help</h1>
+      <p>The controls boil down to: choose your angle and speed (i.e. time, in milliseconds, between drawing)</p>
+      <h3>Controls/Buttons:</h3>
+        <dl>
+          <dt>Reset</dt>
+          <dd>Resets to initial state.</dd>
+          <dt>Draw</dt>
+          <dd>Draws the next rotation.</dd>
+          <dt>Play</dt>
+          <dd>Continuously draws rotations.</dd>
+          <dt>Pause</dt>
+          <dd>Pause drawing rotations.</dd>
+        </dl>
+      <h3>Shortcuts:</h3>
+        <dl>
+          <dt>a</dt>
+          <dd>Open this about prompt.</dd>
+          <dt>?</dt>
+          <dd>Open this help prompt.</dd>
+          <dt>n</dt>
+          <dd>Jump to the n-th rotation. NOTE: this doesn't include all of the rotations between the current rotation and n. It sets n to the given input.</dd>
+          <dt>d</dt>
+          <dd>Draw the next rotation</dd>
+          <dt>&lt;spacebar&gt;</dt>
+          <dd>Toggle the play button</dd>
+          <dt>0</dt>
+          <dd>Set the time between draws to 0; i.e. draw as fast as you can!</dd>
+          <dt>-</dt>
+          <dd>Decrease the amount of time between draws.</dd>
+          <dt>+</dt>
+          <dd>Increase the amount of time between draws.</dd>
+          <dt>c</dt>
+          <dd>Clear and reset the rotations.</dd>
+        </dl>
+    </div>
+  </div>
 
-<script src="https://unpkg.com/vue"></script>
-<script src="/node_modules/big.js/big.js"></script>
+  <div class="popup" id="about-modal">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="close-btn" onclick="togglePopup();">&times;</div>
+      <h1>About</h1>
+      <p>Hey there! I'm Andr&eacute;.
+        I'm a Ph.D. student at Wesleyan University and my research is in Diophantine Approximations.
+        You can read more about it on my <a href="https://andrepoliveira.com">website</a>.
+      </p>
+      <p>
+        Some aspects of this field <span style="font-style:italic;">revolves around</span> looking at the rotations (mod 1) of a real number.
+      </p>
+      <p>Similar to looking at the integers modulo $n$, a number $\pmod 1$ is its fractional part. For example, $\pi = 3.14159... \pmod 1$ is $.14159...$.
+      I like to imagine this as taking all of the intervals $[n, n+1)$ on the real line and stacking them all above the unit interval $[0,1)$.
+      Doing this also identifies the endpoints, 0 and 1; So that we're actually on a circle!</p>
+      <p>
+        I've added a few common numbers as values to play with. I'm open to fun suggestions of other numbers to add!
+        
+        Unfortunately, I haven't yet thought of a good way to include user input...
+      </p>
+      <p>
+        There will be a blog post explaining more of this soon!
+      </p>
+      <p>
+        Here's a breakdown of the coloring and dashes in this visualization:
+        The red dash is $0$ (and $1$). Each green dash is the fractional part of $n \alpha$ for some $n$ and the chosen $\alpha$. 
+        The orange/yellow dashes are "record breaker" rotations. 
+        Specifically, they correspond to the $n \alpha$ that gets the closest to 0 out of all of the previously visited values.
+        The length of the dash corresponds to the value of $n$; it was hard to distinguish different dashes once they started overlapping.
+      </p>
+      <p>If you have any questions or suggestions, please reach out to me!</p>
+      <p>For credit, this idea came out of a discussion with Dan Alvey, another graduate student at Wesleyan University (and my academic brother).
+    </div>
+  </div>
 
-<script src="/app.js"></script>
+  <script type="text/javascript" src="popup.js"></script>
+
+  <script src="https://unpkg.com/vue"></script>
+  <script src="/node_modules/big.js/big.js"></script>
+
+  <script src="/app.js"></script>
+
+  <script src="/draggable.js"></script>
 
 </body>
 </html>
